@@ -1,0 +1,59 @@
+body {
+  overflow-y: scroll;
+  margin: 0;
+  width: 100%;
+  position: fixed;
+  font-family: Montserrat;
+  font-size: 14px;
+}
+
+nav {
+  position: fixed;
+  background-color: #222222;
+  width: 100%;
+  padding: 10px;
+}
+
+nav .button {
+  background-color: #3498DB;
+  color: white;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-right: 5px;
+  font-family: Montserrat;
+  font-size: 14px;
+}
+
+nav .button:hover {
+  background-color: #2980B9;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #333333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  margin-top: 10px;
+}
+
+.dropdown-content a {
+  color: #dddddd;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+.dropdown-content a:hover {background-color: #444444}
+
+.show {display:block;}

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "out/",
+    "strict": true,
+    "module": "commonjs",
+    "target": "ES2017",
+    "downlevelIteration": true
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
