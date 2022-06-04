@@ -25,14 +25,37 @@ const app = new Application({
 })
 document.body.appendChild(app.view)
 
+app.view?.addEventListener("dragover", (e) => {
+  e.preventDefault()
+  e.stopPropagation()
+})
+
+app.view?.addEventListener("drop", (e: DragEvent) => {
+  console.log(e)
+  e.preventDefault()
+  e.stopPropagation()
+  const file = e.dataTransfer?.files[0]
+  if (file) {
+    let url = URL.createObjectURL(file)
+    // Note that hdrpng.js had to be locally changed to support reading from 
+    // an object link blob.
+    let env = new Environment(url, file.name, <Renderer>app.renderer)
+    currentEnvironment = env
+    env.setAsLightingEnvironment(brdf, () => {
+      setupScene(Cubemap.fromFaces(<CubemapFaces>env.diffuse))
+    })
+    URL.revokeObjectURL(url)
+  }
+})
+
 const environments = [
-  new Environment("helipad", "Helipad", <Renderer>app.renderer),
-  new Environment("footprint_court", "Footprint Court", <Renderer>app.renderer),
-  new Environment("chromatic", "Chromatic", <Renderer>app.renderer),
-  new Environment("field", "Field", <Renderer>app.renderer),
-  new Environment("ennis", "Ennis", <Renderer>app.renderer),
-  new Environment("papermill", "Papermill", <Renderer>app.renderer),
-  new Environment("neutral", "Neutral", <Renderer>app.renderer)
+  new Environment("assets/helipad.hdr", "Helipad", <Renderer>app.renderer),
+  new Environment("assets/footprint_court.hdr", "Footprint Court", <Renderer>app.renderer),
+  new Environment("assets/chromatic.hdr", "Chromatic", <Renderer>app.renderer),
+  new Environment("assets/field.hdr", "Field", <Renderer>app.renderer),
+  new Environment("assets/ennis.hdr", "Ennis", <Renderer>app.renderer),
+  new Environment("assets/papermill.hdr", "Papermill", <Renderer>app.renderer),
+  new Environment("assets/neutral.hdr", "Neutral", <Renderer>app.renderer)
 ]
 
 for (let env of environments) {

@@ -18,7 +18,7 @@ export class Environment {
     return this._diffuse
   }
 
-  constructor(public name: string, public displayName:string, public renderer: Renderer) { }
+  constructor(public url: string, public displayName: string, public renderer: Renderer) { }
 
   loadEquirectangularPanorama(complete: (texture: Texture) => void) {
     // @ts-ignore
@@ -26,7 +26,7 @@ export class Environment {
     hdr.onload = () => {
       complete(Texture.from(hdr))
     }
-    hdr.src = "assets/" + this.name + ".hdr"
+    hdr.src = this.url
   }
 
   setAsLightingEnvironment(brdf: Texture, complete: () => void) {
@@ -61,7 +61,7 @@ export class Environment {
 
     zip.file("diffuse.cubemap",
       JSON.stringify(["diffuse_{{face}}.png"]))
-      zip.file("specular.cubemap", JSON.stringify(this._specular.map((_, i) =>
+    zip.file("specular.cubemap", JSON.stringify(this._specular.map((_, i) =>
       `specular_{{face}}_${i}.png`))
     )
     zip.file("skybox.cubemap",
@@ -78,7 +78,7 @@ export class Environment {
       })
     })
     zip.generateAsync({ type: "blob" }).then(content => {
-      saveAs(content, this.name + ".zip")
+      saveAs(content, this.displayName.toLowerCase() + ".zip")
     })
   }
 }
