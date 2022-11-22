@@ -63,7 +63,7 @@ export class Environment {
     }
   }
 
-  download(brdf: Texture, rgbe = false, exposure = 1) {
+  download(brdf: Texture, rgbe = true, exposure = 1) {
     if (!this._specular || !this._diffuse) return
 
     const zip = new JSZip()
