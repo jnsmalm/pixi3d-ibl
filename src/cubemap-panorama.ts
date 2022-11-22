@@ -1,6 +1,7 @@
-import { BaseTexture, BufferResource, Program, Renderer, RenderTexture, Texture } from "pixi.js"
+import { BaseTexture, BufferResource, FORMATS, Program, Renderer, RenderTexture, Texture, TYPES } from "pixi.js"
 import { Mesh3D } from "pixi3d"
 import { Cubemap } from "./cubemap"
+import { FloatBufferResource } from "./float-buffer-resource"
 import { SampleShader } from "./sample-shader"
 
 export class CubemapPanorama {
@@ -20,18 +21,21 @@ export class CubemapPanorama {
     const mesh = Mesh3D.createQuad()
 
     for (let i = 0; i < 6; i++) {
-      const renderTexture = RenderTexture.create({ width: size, height: size })
+      const renderTexture = RenderTexture.create({ width: size, height: size, format: FORMATS.RGBA, type: TYPES.FLOAT })
       renderer.renderTexture.bind(renderTexture)
 
       shader.uniforms.u_currentFace = i
       shader.uniforms.u_panorama = panorama
       shader.render(mesh, renderer)
 
-      const pixels = new Uint8Array(4 * renderTexture.width * renderTexture.height)
+      const pixels = new Float32Array(4 * renderTexture.width * renderTexture.height)
       renderer.gl.readPixels(0, 0, renderTexture.width, renderTexture.height,
-        renderer.gl.RGBA, renderer.gl.UNSIGNED_BYTE, pixels)
+        renderer.gl.RGBA, renderer.gl.FLOAT, pixels)
       faces.push(new Texture(new BaseTexture(
-        new BufferResource(pixels, { width: renderTexture.width, height: renderTexture.height }))))
+        new FloatBufferResource(pixels, { width: renderTexture.width, height: renderTexture.height }, renderer.gl.RGBA32F), {
+        format: FORMATS.RGBA,
+        type: TYPES.FLOAT
+      })))
     }
 
     mesh.destroy()

@@ -49,6 +49,7 @@ app.view?.addEventListener("drop", (e: DragEvent) => {
 })
 
 const environments = [
+  new Environment("assets/sunset.hdr", "Sunset", <Renderer>app.renderer),
   new Environment("assets/helipad.hdr", "Helipad", <Renderer>app.renderer),
   new Environment("assets/footprint_court.hdr", "Footprint Court", <Renderer>app.renderer),
   new Environment("assets/chromatic.hdr", "Chromatic", <Renderer>app.renderer),
@@ -64,7 +65,8 @@ for (let env of environments) {
   item.onclick = () => {
     currentEnvironment = env
     env.setAsLightingEnvironment(brdf, () => {
-      setupScene(Cubemap.fromFaces(<CubemapFaces>env.diffuse))
+      // @ts-ignore
+      setupScene(Cubemap.fromFaces(<CubemapFaces>env.specular[0]))
     })
   }
   document.getElementById("environments-content")?.appendChild(item)
@@ -76,7 +78,8 @@ const control = new CameraOrbitControl(app.view)
 
 let currentEnvironment = environments[0]
 currentEnvironment.setAsLightingEnvironment(brdf, () => {
-  setupScene(Cubemap.fromFaces(<CubemapFaces>currentEnvironment.diffuse))
+  // @ts-ignore
+  setupScene(Cubemap.fromFaces(<CubemapFaces>currentEnvironment.specular[0]))
 })
 
 const setupScene = (cubemap: Cubemap) => {

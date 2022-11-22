@@ -1,6 +1,7 @@
 import { CubeMipmapTexture, Mesh3D } from "pixi3d"
-import { BaseTexture, BufferResource, Program, Renderer, RenderTexture, Shader, Texture } from "pixi.js"
+import { BaseTexture, BufferResource, FORMATS, Program, Renderer, RenderTexture, Shader, Texture, TYPES } from "pixi.js"
 import { SampleShader } from "./sample-shader"
+import { FloatBufferResource } from "./float-buffer-resource"
 
 export class ImageBasedLightingSampler {
   private _mesh: Mesh3D
@@ -18,17 +19,20 @@ export class ImageBasedLightingSampler {
     const textures: Texture[] = []
 
     for (let i = 0; i < faces; i++) {
-      const renderTexture = RenderTexture.create({ width: textureSize, height: textureSize })
+      const renderTexture = RenderTexture.create({ width: textureSize, height: textureSize, format: FORMATS.RGBA, type: TYPES.FLOAT })
       this.renderer.renderTexture.bind(renderTexture)
 
       uniforms(i, shader)
       shader.render(this._mesh, this.renderer)
-      
-      const pixels = new Uint8Array(4 * textureSize * textureSize)
+
+      const pixels = new Float32Array(4 * textureSize * textureSize)
       this.renderer.gl.readPixels(0, 0, textureSize, textureSize,
-        this.renderer.gl.RGBA, this.renderer.gl.UNSIGNED_BYTE, pixels)
+        this.renderer.gl.RGBA, this.renderer.gl.FLOAT, pixels)
       textures.push(new Texture(new BaseTexture(
-        new BufferResource(pixels, { width: textureSize, height: textureSize }))))
+        new FloatBufferResource(pixels, { width: textureSize, height: textureSize }, this.renderer.gl.RGBA32F), {
+        format: FORMATS.RGBA,
+        type: TYPES.FLOAT
+      })))
       this.renderer.renderTexture.bind(undefined)
     }
     return textures
